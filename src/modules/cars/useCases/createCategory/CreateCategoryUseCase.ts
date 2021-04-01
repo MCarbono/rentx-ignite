@@ -26,4 +26,4 @@ class CreateCategoryUseCase {
     }
 }
 
-export default CreateCategoryUseCase;
+export  { CreateCategoryUseCase };
