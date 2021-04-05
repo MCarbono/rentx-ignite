@@ -1,7 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { IUsersRepository } from "../../repositories/IUsersRepository";
+import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { sign } from 'jsonwebtoken';
-import { AppError } from '../../../../errors/AppError';
+import { AppError } from '@shared/errors/AppError';
+
 /**
  * Essa função é usada para comparar a senha não criptografada
  * com a criptografada no bd
