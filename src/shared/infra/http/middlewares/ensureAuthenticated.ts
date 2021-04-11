@@ -4,6 +4,8 @@ import { verify } from 'jsonwebtoken';
 import { UsersRepository } from '../../../../modules/accounts/infra/typeorm/repositories/UsersRepository';
 
 import { AppError } from '@shared/errors/AppError';
+import { UsersTokensRepository } from '@modules/accounts/infra/typeorm/repositories/UsersTokensRepository';
+import auth from '@config/auth';
 
 interface IPayload {
     sub: string;
@@ -12,6 +14,7 @@ interface IPayload {
 export async function ensureAuthenticated(request: Request, response: Response, next: NextFunction){
     //Bearer dsadsadsadsadsadsada(token) - information from headers(token format)
     const authHeader  = request.headers.authorization;
+    const usersTokensRepository = new UsersTokensRepository();
     
     if(!authHeader)
         throw new AppError('Token not provided', 401);
@@ -21,10 +24,9 @@ export async function ensureAuthenticated(request: Request, response: Response, 
 
     try {
         //2° parametro é a chave secreta criada com o método sign 
-        const { sub : user_id } = verify(token, "daa308c1587f95140f645b796e04c810") as IPayload;
+        const { sub : user_id } = verify(token, auth.secret_refresh_token) as IPayload;
         
-        const usersRepository = new UsersRepository();
-        const user = await usersRepository.findById(user_id);
+        const user = await usersTokensRepository.findByUserIdAndRefreshToken(user_id, token);
 
         if(!user)
             throw new AppError('user does not exists', 401);
